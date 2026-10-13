@@ -1,0 +1,778 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>项目工作台 · 示意原型</title>
+<style>
+  :root { --g:#1f5f4a; --g2:#2f7d63; --gl:#e8f2ee; --gl2:#f4f8f6; --a:#d9822b; --al:#fbefe2; --r:#c94a3b; --rl:#fbe9e6;
+          --p:#7b4bb0; --pl:#f1eaf8; --ink:#1f2328; --mute:#66717b; --line:#e0e7e3; --bg:#f2f5f4; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:14px/1.55 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif; }
+  button { font:inherit; cursor:pointer; }
+  header { background:var(--g); color:#fff; padding:14px 22px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+  header h1 { margin:0; font-size:20px; }
+  header .tag { background:var(--a); font-size:12px; padding:2px 9px; border-radius:10px; }
+  header .sub { color:#cfe5db; font-size:12.5px; flex:1; min-width:260px; }
+  header .clock { display:flex; gap:8px; align-items:center; font-size:13px; }
+  header .clock b { font-size:14px; }
+  header .clock button { border:1px solid rgba(255,255,255,.5); background:transparent; color:#fff; border-radius:14px; padding:3px 10px; font-size:12.5px; }
+  nav { display:flex; background:#fff; border-bottom:1px solid var(--line); padding:0 14px; position:sticky; top:0; z-index:5; overflow-x:auto; }
+  nav button { border:0; background:none; padding:12px 16px; color:var(--mute); font-size:14.5px; white-space:nowrap; position:relative; }
+  nav button.on { color:var(--g); font-weight:bold; box-shadow:inset 0 -3px 0 var(--g); }
+  nav .badge { background:var(--r); color:#fff; border-radius:9px; font-size:11px; padding:0 6px; margin-left:4px; }
+  main { max-width:1220px; margin:0 auto; padding:16px; }
+  .card { background:#fff; border-radius:12px; padding:14px 16px; margin-bottom:14px; border:1px solid var(--line); }
+  .card h3 { margin:0 0 10px; font-size:15px; display:flex; justify-content:space-between; align-items:center; }
+  .card h3 small { font-weight:normal; color:var(--mute); font-size:12.5px; }
+  .grid4 { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .kpis { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin-bottom:12px; }
+  .kpi { background:var(--gl2); border-radius:10px; padding:10px; text-align:center; }
+  .kpi b { display:block; font-size:24px; line-height:1.2; }
+  .kpi span { font-size:12.5px; color:var(--mute); }
+  .kpi.red b { color:var(--r); } .kpi.orange b { color:var(--a); } .kpi.purple b { color:var(--p); }
+  .blist { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; font-size:13px; }
+  .blist h4 { margin:0 0 6px; font-size:13px; color:var(--mute); }
+  .blist .it { padding:5px 8px; border-radius:6px; background:var(--gl2); margin-bottom:5px; cursor:pointer; }
+  .blist .it:hover { background:var(--gl); }
+  .lane { display:grid; grid-template-columns:repeat(7, minmax(120px,1fr)); gap:8px; overflow-x:auto; }
+  .col { background:var(--gl2); border-radius:10px; padding:8px; min-height:120px; }
+  .col .ch { font-size:12.5px; font-weight:bold; color:var(--g); margin-bottom:6px; display:flex; justify-content:space-between; }
+  .chip { background:#fff; border:1px solid var(--line); border-left:4px solid var(--g2); border-radius:8px; padding:6px 7px; margin-bottom:6px; font-size:12.5px; cursor:pointer; }
+  .chip b { display:block; } .chip small { color:var(--mute); }
+  .chip.s-超期 { border-left-color:var(--r); } .chip.s-卡住 { border-left-color:var(--a); background:#fffaf4; } .chip.s-已出报告 { opacity:.6; }
+  .chip .warn { color:var(--r); font-weight:bold; }
+  .bars .row { display:grid; grid-template-columns:86px 1fr 26px; gap:8px; align-items:center; margin:6px 0; font-size:13px; }
+  .bars i { display:block; height:10px; border-radius:5px; background:var(--g2); }
+  .bars i.o { background:var(--a); } .bars i.r { background:var(--r); }
+  .big { font-size:30px; font-weight:bold; color:var(--g); } .muted { color:var(--mute); } .small { font-size:12.5px; }
+  .pill { display:inline-block; font-size:12px; padding:1px 8px; border-radius:9px; background:var(--gl); color:var(--g); white-space:nowrap; }
+  .pill.r { background:var(--rl); color:var(--r); } .pill.o { background:var(--al); color:#a3560f; } .pill.p { background:var(--pl); color:var(--p); }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th, td { border-bottom:1px solid var(--line); padding:7px 8px; text-align:left; }
+  th { color:var(--mute); font-weight:normal; background:var(--gl2); }
+  tr.click { cursor:pointer; } tr.click:hover { background:var(--gl2); }
+  .leads { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  .lcard { background:#fff; border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin-bottom:10px; font-size:13px; }
+  .lcard b { font-size:14px; }
+  .btn { border:0; border-radius:8px; background:var(--g); color:#fff; padding:8px 14px; }
+  .btn.ghost { background:#fff; color:var(--g); border:1px solid var(--g2); }
+  .btn.warn { background:var(--a); }
+  .btn:disabled { opacity:.55; }
+  label.f { display:block; font-size:12.5px; color:var(--mute); margin:10px 0 4px; }
+  input, select, textarea { font:inherit; border:1px solid var(--line); border-radius:8px; padding:7px 9px; background:#fbfcfc; width:100%; }
+  textarea { resize:vertical; min-height:56px; }
+  .seg { display:flex; gap:8px; } .seg button { flex:1; border:1px solid var(--line); background:#fff; border-radius:8px; padding:8px; }
+  .seg button.on { background:var(--g); color:#fff; border-color:var(--g); } .seg button.on.bad { background:var(--a); border-color:var(--a); }
+  .hint { background:var(--al); border-radius:8px; padding:8px 10px; font-size:13px; margin-top:8px; }
+  .ok { background:var(--gl); border-radius:8px; padding:10px 12px; font-size:13.5px; margin-top:10px; white-space:pre-wrap; }
+  .issue { border:1px solid var(--line); border-left:4px solid var(--a); border-radius:10px; padding:12px; margin-bottom:12px; background:#fff; }
+  .issue.esc { border-left-color:var(--r); }
+  .issue .hd { display:flex; justify-content:space-between; gap:8px; font-weight:bold; }
+  .acts { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:8px; }
+  .acts select { width:auto; }
+  .chat { max-height:420px; overflow:auto; padding:4px; }
+  .bub { padding:9px 12px; border-radius:10px; margin:8px 0; max-width:82%; white-space:pre-wrap; font-size:13.5px; }
+  .bub.me { background:var(--g); color:#fff; margin-left:auto; } .bub.ai { background:var(--gl2); border:1px solid var(--line); }
+  .chips { display:flex; flex-wrap:wrap; gap:7px; margin:8px 0; }
+  .chips span { border:1px solid var(--line); background:#fff; border-radius:14px; padding:3px 10px; font-size:12.5px; cursor:pointer; }
+  .kb { font-size:12.5px; } .kb div { padding:5px 0; border-bottom:1px dashed var(--line); }
+  .set input[type=number] { width:64px; padding:5px; text-align:center; }
+  .drawer { position:fixed; top:0; right:0; bottom:0; width:min(560px,100%); background:#fff; box-shadow:-6px 0 24px rgba(0,0,0,.15);
+            transform:translateX(105%); transition:transform .2s; z-index:20; overflow:auto; padding:18px; }
+  .drawer.on { transform:none; }
+  .mask { position:fixed; inset:0; background:rgba(0,0,0,.3); display:none; z-index:15; } .mask.on { display:block; }
+  .kv { display:grid; grid-template-columns:84px 1fr; gap:5px 10px; font-size:13px; }
+  .kv div:nth-child(odd) { color:var(--mute); }
+  .steps { display:flex; gap:4px; margin:10px 0; } .steps div { flex:1; text-align:center; font-size:11.5px; padding:5px 2px; border-radius:6px; background:var(--gl2); color:var(--mute); }
+  .steps div.done { background:var(--gl); color:var(--g); } .steps div.cur { background:var(--g); color:#fff; } .steps div.late { background:var(--r); color:#fff; }
+  .tl div { border-left:2px solid var(--line); padding:3px 0 8px 10px; font-size:13px; position:relative; }
+  .tl div:before { content:""; position:absolute; left:-5px; top:8px; width:8px; height:8px; border-radius:50%; background:var(--g2); }
+  .tl .k-卡点:before, .tl .k-升级:before { background:var(--r); } .tl .k-卡点处理:before { background:var(--a); }
+  .modal { position:fixed; left:50%; top:8%; transform:translateX(-50%); width:min(620px,94%); background:#fff; border-radius:12px; padding:18px; z-index:21; display:none; box-shadow:0 10px 40px rgba(0,0,0,.2); }
+  .modal.on { display:block; }
+  .card h3 { flex-wrap:wrap; gap:2px 10px; } .btn { white-space:nowrap; }
+  .toast { position:fixed; left:50%; top:70px; transform:translateX(-50%); background:rgba(20,40,30,.9); color:#fff; padding:9px 18px; border-radius:8px; display:none; z-index:30; }
+  @media (max-width:860px) { .grid4, .grid2, .leads, .blist { grid-template-columns:1fr; } .kpis { grid-template-columns:repeat(3,1fr); } }
+</style>
+</head>
+<body>
+<header>
+  <h1>项目工作台</h1><span class="tag">示意原型</span>
+  <div class="sub">按贵司了解表里写的流程搭的示意；项目、人员、数据均为虚构；诊断后按您的规矩重新配置</div>
+  <div class="clock">演示日期 <b id="clock"></b><button data-clock="1">快进 1 天</button><button data-clock="3">快进 3 天</button></div>
+</header>
+<nav id="tabs">
+  <button data-tab="ov" class="on">总览</button><button data-tab="lead">商机</button><button data-tab="rep">报进度</button>
+  <button data-tab="inbox">待我处理<span class="badge" id="ibadge"></span></button><button data-tab="ask">问助理</button><button data-tab="set">规矩设置</button>
+</nav>
+<main>
+  <section id="ov">
+    <div class="card"><h3>今日简报（每天 8 点推送给胡总）<small id="briefDate"></small></h3>
+      <div class="kpis" id="kpis"></div><div class="blist" id="blist"></div></div>
+    <div class="card"><h3>各步骤上的项目 <small>左边框：绿色正常 · 橙色卡住 · 红色超期；点项目看详情</small></h3><div class="lane" id="lane"></div></div>
+    <div class="grid4">
+      <div class="card bars"><h3>近 30 天卡点类型</h3><div id="byType"></div></div>
+      <div class="card"><h3>卡点平均解决</h3><div class="big" id="avgClose"></div><div class="muted small" id="openCnt"></div></div>
+      <div class="card bars"><h3>复核退回原因 <small id="retRate"></small></h3><div id="reasons"></div></div>
+      <div class="card bars"><h3>人员在手项目</h3><div id="load"></div></div>
+    </div>
+  </section>
+
+  <section id="lead" hidden>
+    <div class="card"><h3>商机：从拿项目到签合同 <small>签了合同就一键转成项目，按业务类型自动生成每一步的计划</small></h3><div class="leads" id="leads"></div></div>
+  </section>
+
+  <section id="rep" hidden>
+    <div class="grid2">
+      <div class="card">
+        <h3>报进度 <small>阶段变化或遇到卡点时填，不用每天写日报</small></h3>
+        <label class="f">我是</label><select id="who"></select>
+        <label class="f">项目</label><select id="proj"></select>
+        <div class="small muted" id="projInfo" style="margin-top:6px"></div>
+        <label class="f">现在在哪一步</label><select id="stage"></select>
+        <label class="f">这次完成了什么</label><input id="done" placeholder="一句话">
+        <label class="f">下一步</label><input id="next" placeholder="一句话">
+        <label class="f">卡住了吗</label>
+        <div class="seg"><button data-blk="0" class="on">没有</button><button data-blk="1">卡住了</button></div>
+        <div id="blkBox" hidden>
+          <label class="f">卡点类型</label><select id="itype"></select>
+          <div class="hint" id="route"></div>
+          <label class="f">卡在哪（说清楚，带上数字）</label><textarea id="where"></textarea>
+        </div>
+        <div style="margin-top:14px"><button class="btn" id="submit">提交</button></div>
+        <div id="repResult"></div>
+      </div>
+      <div class="card">
+        <h3>一句话自动填（可选）<small>AI 先填好表单，您检查后再提交</small></h3>
+        <textarea id="oneline" placeholder="比如：XG-03 收资料时发现缺 12 张签证原件，施工方说下周才能补"></textarea>
+        <div class="chips" id="oneEx"></div>
+        <button class="btn ghost" id="fill">AI 帮我填表</button>
+        <div class="small muted" style="margin-top:10px">进度、超期、派单、升级都按规则走，结果确定可查；AI 只在这里帮忙把话整理成表单，提交前由人确认。在线演示版用规则模拟这一步，正式版由国内大模型整理。</div>
+        <h3 style="margin-top:18px">这个项目最近的记录</h3><div class="tl" id="repTl"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="inbox" hidden>
+    <div class="grid2">
+      <div><div class="card"><h3>待胡总处理 <small>直接派给您的，或超时自动升级上来的</small></h3><div id="ibox"></div></div></div>
+      <div><div class="card"><h3>其他人正在处理的卡点 <small>到时限没解决会自动升级到左边</small></h3><div id="others"></div></div></div>
+    </div>
+  </section>
+
+  <section id="ask" hidden>
+    <div class="grid2">
+      <div class="card"><h3>问助理 <small>按公司口径库回答并注明依据；口径库没有的，派给技术负责人</small></h3>
+        <div class="chat" id="chat"><div class="bub ai">签证、变更、计量计价、复核这类问题可以先问我；也可以问"宜昌的项目到哪了"。</div></div>
+        <div class="chips" id="askEx"></div>
+        <div style="display:flex;gap:8px"><input id="askIn" placeholder="输入问题"><button class="btn" id="askBtn">发送</button></div>
+        <div class="small muted" style="margin-top:8px">在线演示版用关键词在口径库里找答案；正式版由国内大模型理解问题，同样只按口径库回答、注明依据。</div>
+      </div>
+      <div class="card"><h3>公司口径库 <small id="kbCnt"></small></h3><div class="kb" id="kb"></div></div>
+    </div>
+  </section>
+
+  <section id="set" hidden>
+    <div class="card set"><h3>规矩设置 <small>这些都由胡总和骨干定；改完马上生效，总览和简报会按新规矩重算</small></h3>
+      <div class="grid2">
+        <div>
+          <b>项目步骤（按贵司的叫法）</b><div id="stageNames" style="margin-top:8px"></div>
+          <b style="display:block;margin-top:16px">卡点类型、谁处理、多久升级</b><table id="routing" style="margin-top:8px"></table>
+          <label class="f">多少天没更新进简报</label><input type="number" id="stall">
+          <label class="f" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="todo" style="width:auto"> 卡点和升级同时发钉钉待办</label>
+        </div>
+        <div><b>节点模板：每一步计划几天</b><table id="tpl" style="margin-top:8px"></table></div>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:10px"><button class="btn" id="saveSet">保存并生效</button>
+        <button class="btn ghost" id="resetDemo">恢复演示数据</button></div>
+      <div class="small muted" style="margin-top:8px">演示数据只存在您这台设备的浏览器里，可以随便点、随便改；点"恢复演示数据"就回到初始状态。</div>
+    </div>
+  </section>
+</main>
+
+<div class="mask" id="mask"></div>
+<div class="drawer" id="drawer"></div>
+<div class="modal" id="modal"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+// 项目工作台 v2 在线演示版：把本机后端（store.py + brain2.py）的规则搬到浏览器里。
+// 数据全部虚构，只存在打开它的这个浏览器里（localStorage）；"恢复演示数据"一键复原。
+// AI 两处（问助理、一句话填表）在演示版用规则模拟；正式版接国内大模型，同样只按口径库回答。
+const LOCAL = (() => {
+  const KEY = 'gczx-workbench-demo-v2';
+  const STAGE_NAMES = ['开始执行', '形成初稿', '核对汇报', '审核对量', '协商沟通', '报告审核', '已出报告'];
+  const LEAD_STAGES = ['信息收集', '获取中', '已签约', '未中标'];
+  const BIZ = ['结算审核', '跟踪审计', '财评', '司法鉴定', '预算编制'];
+  const TEMPLATES = {'结算审核': [5, 3, 2, 4, 3, 2], '跟踪审计': [60, 5, 3, 5, 3, 3], '财评': [4, 3, 2, 3, 2, 2],
+                     '司法鉴定': [10, 5, 3, 5, 5, 3], '预算编制': [4, 3, 2, 2, 1, 2]};
+  const ROUTING = {'资料缺失': {role: '项目负责人', sla: 3}, '对方不认': {role: '项目负责人', sla: 2},
+                   '技术口径': {role: '技术负责人', sla: 1}, '需要胡总出面': {role: '胡总', sla: 1},
+                   '内部资源': {role: '胡总', sla: 2}};
+  const PEOPLE = [['胡总', '老板'], ['周工', '技术负责人'], ['张工', '项目负责人'], ['李工', '项目负责人'], ['刘工', '项目负责人'],
+                  ['陈工', '项目负责人'], ['赵工', '项目负责人'], ['小周', '经办人'], ['小吴', '经办人'], ['小李', '投标']];
+  const REVIEW_REASONS = ['取费错误', '计算错误', '依据缺失', '重复计取', '格式问题'];
+  const KB_SAMPLE = [
+    ['签证单缺监理或建设单位签字', '原则上不作为结算依据。先请施工方补签；补不了的，要有会议纪要、监理日志、影像资料等能互相印证的证据，经建设单位书面确认后再计入。'],
+    ['签证内容属于合同包干范围', '合同已经包含的工作内容，不因签证另行计价。'],
+    ['变更只有工程量、没有单价', '按合同约定的变更估价原则定价。合同里有适用单价的用适用单价；有类似的参照类似单价；都没有的，按成本加合理利润由双方协商，报建设单位确认。'],
+    ['隐蔽工程没有验收记录', '原则上不予计量。能提供影像、检测报告等证据，并经监理和建设单位确认的，按确认的量计。'],
+    ['材料价格调差', '按合同约定的调差方式、风险幅度和基准价执行；合同没有约定的，提交建设单位协商确定，审核人员不自行决定。'],
+    ['送审结算书和竣工图对不上', '以竣工图和经确认的变更、签证为准计量；差异部分请施工方书面说明并补资料。'],
+    ['暂估价材料', '按建设单位确认的实际价格（认质认价）调整，差额计入结算。'],
+    ['对数时施工方不认审减', '把争议项单列，写清审核依据和施工方意见，提交建设单位协调；必要时开三方会议，形成会议纪要。'],
+    ['跟踪审计的进度款', '按当期实际完成、经监理确认的工程量计；进度款审核不代替最终结算审核。'],
+    ['三级复核前自查', '计算书和报告数字是否一致、依据文件是否齐全、取费标准是否用对、签证有没有重复计取。'],
+  ];
+  // 示例口径的触发词：全部命中 all、命中 any 其一、不能出现 none（演示版的规则，正式版由大模型判断）
+  const KB_RULES = [
+    {all: ['签字'], any: ['签证', '变更', '结算']},
+    {all: ['包干']},
+    {all: ['单价'], any: ['变更', '没有', '无']},
+    {all: ['隐蔽']},
+    {all: ['调差'], any: ['合同', '约定', '幅度', '基准'], none: ['信息价', '跨年']},
+    {all: ['竣工图']},
+    {all: ['暂估']},
+    {any: ['不认审减', '不认可审减', '审减不认', '不同意审减']},
+    {all: ['进度款']},
+    {all: ['复核'], any: ['自查', '之前', '前', '检查']},
+  ];
+
+  let D = null;
+  const pad = n => String(n).padStart(2, '0');
+  const ymd = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const s2d = s => { const [y, m, d] = String(s).slice(0, 10).split('-').map(Number); return new Date(y, m - 1, d); };
+  const addD = (s, n) => { const d = s2d(s); d.setDate(d.getDate() + n); return ymd(d); };
+  const diff = (a, b) => Math.round((s2d(a) - s2d(b)) / 864e5);
+  const nowHM = () => { const n = new Date(); return `${pad(n.getHours())}:${pad(n.getMinutes())}`; };
+  const clone = o => JSON.parse(JSON.stringify(o));
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(D)); } catch (e) { /* 隐私模式存不了，刷新后复原 */ } };
+  const today = () => D.settings.demo_date;
+  const stamp = hm => `${today()} ${hm || D.settings.clock_time || nowHM()}`;
+  const nid = t => (D.seq[t] = (D.seq[t] || 0) + 1);
+  const note = (pid, who, kind, text, ts) => D.updates.push({id: nid('updates'), project_id: pid, ts: ts || stamp(), who, kind, text});
+  const byId = (t, id) => D[t].find(x => x.id === id);
+  const assigneeFor = (type, p) => { const role = D.settings.routing[type].role;
+    return role === '项目负责人' ? (p ? p.owner : '周工') : role === '技术负责人' ? '周工' : '胡总'; };
+
+  function seed(base) {
+    D = {settings: {demo_date: base, base_date: base, stage_names: STAGE_NAMES.slice(), templates: clone(TEMPLATES),
+                    routing: clone(ROUTING), stall_days: 5, todo_enabled: true, clock_time: null},
+         seq: {}, leads: [], projects: [], updates: [], issues: [], reviews: [], kb: []};
+    const Dd = n => addD(base, n);
+    const ids = {};
+    [['WH-01', '武汉某市政道路改造工程', '武汉', '结算审核', '建设单位', '张工', '小周', 3, -3, -15],
+     ['WH-02', '武汉某厂房工程款纠纷', '武汉', '司法鉴定', '法院', '陈工', '小吴', 1, -2, -20],
+     ['WH-03', '武汉某学校改扩建工程', '武汉', '跟踪审计', '平台公司', '刘工', '小吴', 0, -40, -40],
+     ['YC-01', '宜昌某安置房项目', '宜昌', '跟踪审计', '建设单位', '李工', '小周', 0, -20, -20],
+     ['YC-02', '宜昌某河道整治工程', '宜昌', '结算审核', '审计局', '李工', '小周', 5, -4, -22],
+     ['XY-01', '襄阳某乡镇卫生院', '襄阳', '财评', '财政评审中心', '陈工', '小吴', 0, -2, -2],
+     ['XY-02', '襄阳某产业园配套道路', '襄阳', '结算审核', '平台公司', '陈工', '小吴', 4, -1, -16],
+     ['JZ-01', '荆州某水厂扩建工程', '荆州', '财评', '财政评审中心', '刘工', '小周', 3, -3, -12],
+     ['JZ-02', '荆州某老旧小区改造', '荆州', '跟踪审计', '平台公司', '赵工', '小吴', 0, -30, -30],
+     ['HG-01', '黄冈某中学风雨操场', '黄冈', '预算编制', '建设单位', '赵工', '小周', 2, -1, -8],
+     ['HG-02', '黄冈某农村公路工程', '黄冈', '结算审核', '审计局', '赵工', '小吴', 5, -3, -18],
+    ].forEach(([code, name, city, biz, client, owner, doer, stage, ss, cr]) => {
+      const id = nid('projects');
+      D.projects.push({id, code, name, city, biz, client, owner, doer, stage, stage_start: Dd(ss), created: Dd(cr), lead_id: null});
+      ids[code] = id;
+      note(id, '行政', '立项', `合同签订后立项，按「${biz}」模板生成节点计划`, `${Dd(cr)} 09:30`);
+      if (stage > 0) note(id, owner, '阶段', `进入「${STAGE_NAMES[stage]}」`, `${Dd(ss)} 17:10`);
+    });
+    [['WH-01', -1, '张工', '第二轮对量约在周三，差异集中在土方和沥青面层'], ['WH-02', -1, '陈工', '鉴定意见初稿写了七成'],
+     ['WH-03', -6, '小吴', '9 月进度款资料还缺监理确认'], ['YC-01', 0, '小周', '今天现场量了地下室底板，明天量外墙'],
+     ['YC-02', -2, '李工', '三级复核退回：取费标准用错，正在改'], ['XY-01', -1, '小吴', '送审单位说周三补交变更资料'],
+     ['XY-02', -1, '陈工', '协商沟通：两处签证意见已和施工方谈妥'], ['JZ-01', -1, '刘工', '对量时送审单位不认可材料调差'],
+     ['JZ-02', -2, '小吴', '9 月进度款资料齐了，开始审'], ['HG-01', -1, '赵工', '控制价核对完，准备向建设单位汇报'],
+     ['HG-02', -1, '赵工', '复核还没过，审计局要求本周出报告'],
+    ].forEach(([code, d, who, text]) => note(ids[code], who, '进度', text, `${Dd(d)} 18:20`));
+    const issue = (code, type, where, reporter, created, status = '待处理', closed = null, resolution = null, escalated = 0) => {
+      const pid = ids[code] || null;
+      D.issues.push({id: nid('issues'), project_id: pid, type, where_txt: where, reporter, assignee: assigneeFor(type, pid ? byId('projects', pid) : null),
+                     status, created: Dd(created), escalated, escalated_at: escalated ? Dd(created + ROUTING[type].sla + 1) : null,
+                     closed_at: closed !== null ? Dd(closed) : null, resolution, kb_id: null});
+    };
+    issue('WH-03', '资料缺失', '9 月进度款资料缺监理确认，施工方一直没补', '小吴', -6, '待处理', null, null, 1);
+    issue('JZ-01', '对方不认', '送审单位不认可材料调差', '刘工', -1);
+    issue('HG-02', '需要胡总出面', '审计局要求本周出报告，复核还没过，需要沟通延期', '赵工', -1);
+    issue('YC-01', '技术口径', '跨年度施工的材料调差，信息价按哪一期取？', '李工', 0);
+    [['WH-01', '资料缺失', '缺竣工图', '小周', -25, -22, '建设单位补交竣工图'],
+     ['XY-02', '资料缺失', '缺 6 张签证原件', '小吴', -20, -16, '施工方补齐原件'],
+     ['HG-02', '资料缺失', '结算书和广联达文件对不上', '小吴', -14, -11, '施工方重新提交'],
+     ['YC-02', '资料缺失', '缺隐蔽工程验收记录', '小周', -12, -7, '监理补签验收记录'],
+     ['WH-01', '对方不认', '土方放坡系数有分歧', '张工', -10, -6, '三方会议按地勘报告定'],
+     ['XY-02', '对方不认', '两张签证施工方坚持要计', '陈工', -9, -3, '按合同包干范围核减，施工方签字'],
+     ['JZ-02', '技术口径', '进度款能不能按形象进度估算', '小吴', -8, -7, '按监理确认的实际完成量计'],
+     ['HG-01', '技术口径', '暂估价材料怎么调整', '赵工', -5, -3, '按建设单位认质认价调整'],
+     ['WH-02', '内部资源', '鉴定意见要两个人同时赶', '陈工', -6, -5, '从宜昌调小周支援两天'],
+    ].forEach(([code, type, where, rep, cr, cl, res]) => issue(code, type, where, rep, cr, '已解决', cl, res));
+    [['YC-02', -2, '三级', '周工', '退回', '取费错误'], ['WH-01', -20, '二级', '张工', '退回', '计算错误'],
+     ['XY-02', -18, '三级', '周工', '退回', '取费错误'], ['HG-02', -11, '二级', '赵工', '退回', '依据缺失'],
+     ['JZ-01', -24, '三级', '周工', '退回', '取费错误'],
+     ...[['WH-01', -28], ['XY-02', -27], ['HG-02', -26], ['YC-02', -21], ['JZ-02', -19], ['WH-02', -17],
+         ['HG-01', -15], ['XY-01', -13], ['YC-01', -9], ['JZ-01', -4]].map(([c, d]) => [c, d, '三级', '周工', '通过', '']),
+    ].forEach(([code, d, level, reviewer, result, reason]) =>
+      D.reviews.push({id: nid('reviews'), project_id: ids[code], level, reviewer, result, reason, note: null, ts: `${Dd(d)} 15:00`}));
+    [['孝感某道路改造工程结算审核', '长期合作', '建设单位', '结算审核', '中', '获取中', Dd(0), '今天签合同', '胡总', '孝感', 'XG-03'],
+     ['宜昌某学校扩建跟踪审计', '公开招标', '平台公司', '跟踪审计', '大', '信息收集', Dd(5), '投标截止', '小李', '宜昌', ''],
+     ['黄冈某道路财评', '入库摇号', '财政评审中心', '财评', '中', '获取中', Dd(2), '等摇号结果', '胡总', '黄冈', ''],
+     ['襄阳某厂房司法鉴定', '熟人介绍', '法院', '司法鉴定', '小', '未中标', '', '对方选了别家', '胡总', '襄阳', ''],
+    ].forEach(([name, source, client, biz, scale, stage, next_date, next_note, owner, city, code_hint]) =>
+      D.leads.push({id: nid('leads'), name, source, client, biz, scale, stage, next_date, next_note, owner, city, code_hint, project_id: null}));
+    KB_SAMPLE.forEach(([q, a]) => D.kb.push({id: nid('kb'), q, a, source: '示例口径', ts: Dd(-30)}));
+    save();
+  }
+
+  function db() {
+    if (!D) { try { D = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { D = null; } }
+    if (!D || !D.settings) seed(ymd(new Date()));
+    return D;
+  }
+
+  function refresh() {
+    const t = today(), routing = D.settings.routing;
+    D.issues.filter(i => i.status === '待处理' && !i.escalated).forEach(i => {
+      const sla = (routing[i.type] || {}).sla ?? 2;
+      if (diff(t, i.created) >= sla && i.assignee !== '胡总') {
+        i.escalated = 1; i.escalated_at = t;
+        if (i.project_id) note(i.project_id, '系统', '升级', `卡点「${i.type}」超过 ${sla} 天没解决，已升级给胡总`);
+      }
+    });
+    save();
+  }
+
+  function state() {
+    const t = today(), names = D.settings.stage_names, templates = D.settings.templates, routing = D.settings.routing,
+          stall = D.settings.stall_days;
+    const issues = clone(D.issues).sort((a, b) => b.id - a.id);
+    const openBy = {};
+    issues.forEach(i => { if (i.status === '待处理' && i.project_id) (openBy[i.project_id] = openBy[i.project_id] || []).push(i); });
+    const lastBy = {};
+    D.updates.forEach(u => { if (['进度', '阶段', '立项'].includes(u.kind)) { const d = u.ts.slice(0, 10);
+      if (!lastBy[u.project_id] || d > lastBy[u.project_id]) lastBy[u.project_id] = d; } });
+    const projects = clone(D.projects).sort((a, b) => a.id - b.id).map(p => {
+      const days = templates[p.biz] || [3, 3, 3, 3, 3, 3];
+      const done = p.stage >= names.length - 1;
+      const plan_days = p.stage < days.length ? days[p.stage] : 0;
+      const due = addD(p.stage_start, plan_days);
+      const overdue = done ? 0 : Math.max(0, diff(t, due));
+      const last = lastBy[p.id];
+      const stale = last ? diff(t, last) : 99;
+      const opens = openBy[p.id] || [];
+      const status = done ? '已出报告' : opens.length ? '卡住' : overdue ? '超期' : '正常';
+      return {...p, stage_name: names[p.stage], due, overdue, stale, stalled: !done && stale >= stall, status,
+              open_issues: opens.length, boss: opens.some(i => i.assignee === '胡总' || i.escalated), last_update: last || null,
+              plan_days, total_days: days.reduce((x, y) => x + y, 0)};
+    });
+    const pmap = {}; projects.forEach(p => pmap[p.id] = p);
+    issues.forEach(i => {
+      const p = pmap[i.project_id];
+      i.project = p ? `${p.code} ${p.name}` : '通用问题';
+      i.age = diff(i.closed_at || t, i.created);
+      i.sla = (routing[i.type] || {}).sla ?? 2;
+      i.inbox = i.status === '待处理' && (i.assignee === '胡总' || !!i.escalated);
+    });
+    const running = projects.filter(p => p.status !== '已出报告');
+    const month = issues.filter(i => diff(t, i.created) <= 30);
+    const byType = {}; month.forEach(i => byType[i.type] = (byType[i.type] || 0) + 1);
+    const closed = month.filter(i => i.closed_at);
+    const reviews = clone(D.reviews).sort((a, b) => (a.ts < b.ts ? 1 : a.ts > b.ts ? -1 : 0));
+    const rmonth = reviews.filter(r => diff(t, r.ts) <= 30);
+    const reasons = {}; rmonth.forEach(r => { if (r.result === '退回') reasons[r.reason] = (reasons[r.reason] || 0) + 1; });
+    const load = {}; running.forEach(p => load[p.owner] = (load[p.owner] || 0) + 1);
+    const inbox = issues.filter(i => i.inbox);
+    return {
+      today: t, base_date: D.settings.base_date, stage_names: names, templates, routing, stall_days: stall,
+      todo_enabled: D.settings.todo_enabled, biz: BIZ, people: PEOPLE, review_reasons: REVIEW_REASONS, lead_stages: LEAD_STAGES,
+      projects, issues, reviews: reviews.slice(0, 40), leads: clone(D.leads).sort((a, b) => a.id - b.id),
+      kb: clone(D.kb).sort((a, b) => a.id - b.id),
+      updates: clone(D.updates).sort((a, b) => (a.ts < b.ts ? 1 : a.ts > b.ts ? -1 : b.id - a.id)),
+      stats: {running: running.length, issue_by_type: byType, open_issues: issues.filter(i => i.status === '待处理').length,
+              avg_close_days: closed.length ? Math.round(closed.reduce((s, i) => s + i.age, 0) / closed.length * 10) / 10 : null,
+              review_total: rmonth.length, review_returns: rmonth.filter(r => r.result === '退回').length,
+              return_reasons: reasons, load},
+      brief: {inbox, new_issues: issues.filter(i => i.status === '待处理' && diff(t, i.created) <= 1),
+              overdue: running.filter(p => p.overdue), stalled: running.filter(p => p.stalled),
+              due_today: running.filter(p => p.due === t)},
+    };
+  }
+
+  function convertLead(leadId, biz, owner, doer) {
+    const lead = byId('leads', leadId);
+    if (!lead || lead.project_id) throw new Error('这条商机不存在或已经转成项目了');
+    const code = lead.code_hint || `XM-${pad(D.projects.length + 1)}`;
+    const name = lead.name.replace(biz, '').trim() || lead.name;
+    const t = today(), id = nid('projects');
+    D.projects.push({id, code, name, city: lead.city || '湖北', biz, client: lead.client, owner, doer, stage: 0, stage_start: t, created: t, lead_id: leadId});
+    lead.stage = '已签约'; lead.project_id = id; lead.next_note = '已转为项目';
+    note(id, '胡总', '立项', `由商机转入：签订合同后立项，按「${biz}」模板生成节点计划，负责人 ${owner}、经办人 ${doer}`);
+    return id;
+  }
+
+  function progress(pid, who, stage, doneTxt, nextTxt, blocked, type, where) {
+    const p = byId('projects', pid);
+    if (!p) throw new Error('项目不存在');
+    const names = D.settings.stage_names;
+    stage = +stage;
+    if (stage !== p.stage) { note(pid, who, '阶段', `「${names[p.stage]}」→「${names[stage]}」`); p.stage = stage; p.stage_start = today(); }
+    const text = [doneTxt && `完成：${doneTxt}`, nextTxt && `下一步：${nextTxt}`].filter(Boolean).join('；');
+    if (text) note(pid, who, '进度', text);
+    const result = {issue: null};
+    if (blocked) {
+      if (!D.settings.routing[type]) throw new Error('请选择卡点类型');
+      const assignee = assigneeFor(type, p), id = nid('issues'), sla = D.settings.routing[type].sla;
+      D.issues.push({id, project_id: pid, type, where_txt: where || '', reporter: who, assignee, status: '待处理', created: today(),
+                     escalated: 0, escalated_at: null, closed_at: null, resolution: null, kb_id: null});
+      note(pid, who, '卡点', `报卡点「${type}」：${where}（派给 ${assignee}，${sla} 天内处理，超时升级胡总）`);
+      result.issue = {id, assignee, sla};
+    }
+    return result;
+  }
+
+  function actIssue(issueId, action, who, text, toKb, newAssignee) {
+    const i = byId('issues', issueId);
+    if (!i) throw new Error('卡点不存在');
+    let kbId = null;
+    if (action === 'close') {
+      i.status = '已解决'; i.closed_at = today(); i.resolution = text;
+      if (toKb && text) {
+        const t = s2d(today());
+        kbId = nid('kb');
+        D.kb.push({id: kbId, q: i.where_txt, a: text, source: `${who} ${t.getMonth() + 1}-${pad(t.getDate())} 补充`, ts: today()});
+        i.kb_id = kbId;
+      }
+      if (i.project_id) note(i.project_id, who, '卡点处理', `关闭卡点「${i.type}」：${text}` + (kbId ? '（已收进口径库）' : ''));
+    } else if (action === 'reassign') {
+      i.assignee = newAssignee; i.escalated = 0;
+      if (i.project_id) note(i.project_id, who, '卡点处理', `卡点「${i.type}」转派给 ${newAssignee}` + (text ? `：${text}` : ''));
+    } else throw new Error('不支持的操作');
+    return kbId;
+  }
+
+  function addReview(pid, level, reviewer, result, reason, noteTxt) {
+    D.reviews.push({id: nid('reviews'), project_id: pid, level, reviewer, result, reason: result === '退回' ? reason : '', note: noteTxt || '', ts: stamp()});
+    note(pid, reviewer, '复核', `${level}复核${result}` + (result === '退回' ? `，原因：${reason}` : '') + (noteTxt ? `。${noteTxt}` : ''));
+  }
+
+  function updateSettings(d) {
+    const s = D.settings;
+    if (d.stage_names) s.stage_names = d.stage_names.map((x, k) => String(x).trim() || STAGE_NAMES[k]).slice(0, STAGE_NAMES.length);
+    if (d.templates) { const t = {}; Object.entries(d.templates).forEach(([b, v]) => t[b] = v.map(x => Math.max(0, parseInt(x) || 0)).slice(0, 6)); s.templates = t; }
+    if (d.routing) { const r = {}; Object.entries(d.routing).forEach(([k, v]) => r[k] = {role: v.role, sla: Math.max(0, parseInt(v.sla) || 0)}); s.routing = r; }
+    if ('stall_days' in d) s.stall_days = Math.max(1, parseInt(d.stall_days) || 1);
+    if ('todo_enabled' in d) s.todo_enabled = !!d.todo_enabled;
+  }
+
+  // ---------------- 问助理、一句话填表（演示版用规则模拟）
+  const bigrams = s => { const t = String(s).replace(/[\s，。？！、；：,.?!;:（）()“”"]/g, ''); const out = new Set();
+    for (let k = 0; k < t.length - 1; k++) out.add(t.slice(k, k + 2)); return out; };
+  const jaccard = (a, b) => { const A = bigrams(a), B = bigrams(b); let n = 0; A.forEach(x => { if (B.has(x)) n++; });
+    return A.size + B.size - n ? n / (A.size + B.size - n) : 0; };
+  const has = (t, w) => t.includes(w);
+  const CITIES = ['武汉', '宜昌', '襄阳', '荆州', '黄冈', '孝感'];
+
+  function kbHit(text, kb) {
+    let best = null, score = 0;
+    kb.forEach((k, idx) => { const s = jaccard(text, k.q); if (s > score) { score = s; best = k; }
+      const r = k.source === '示例口径' ? KB_RULES[idx] : null;
+      if (r && (r.all || []).every(w => has(text, w)) && (!r.any || r.any.some(w => has(text, w))) && !(r.none || []).some(w => has(text, w))
+          && score < 0.5) { best = k; score = 0.5; } });
+    return score >= 0.5 ? best : null;
+  }
+
+  function projectsText(st, filter) {
+    return st.projects.filter(p => p.status !== '已出报告' && filter(p)).map(p => {
+      const opens = st.issues.filter(i => i.status === '待处理' && i.project_id === p.id).map(i => i.where_txt);
+      return `${p.code} ${p.name}：在「${p.stage_name}」，${p.status === '卡住' ? '卡住' : p.status === '超期' ? `超期 ${p.overdue} 天` : '正常'}` +
+             (opens.length ? `（卡点：${opens.join('；')}）` : '') + `，负责人${p.owner}。`;
+    });
+  }
+
+  function ask(text, who) {
+    refresh();
+    const st = state();
+    const code = (text.toUpperCase().match(/[A-Z]{2}-\d{2}/) || [])[0];
+    const city = CITIES.find(c => has(text, c));
+    const isQuery = /到哪|进展|进度|怎么样了|情况|卡在哪|哪些项目/.test(text) && (code || city || /项目/.test(text));
+    if (isQuery) {
+      const lines = projectsText(st, p => (code ? p.code === code : city ? p.city === city : true));
+      if (lines.length) return (code || city ? '' : `在办项目 ${lines.length} 个：\n`) + lines.slice(0, 6).join('\n');
+      return `${code || city || ''}没有在办的项目。`;
+    }
+    const tech = /签证|变更|计量|计价|复核|结算|单价|调差|取费|审减|进度款|隐蔽|竣工图|暂估|管理费|定额|信息价|工程量|签字|对数|对量|规范|怎么算|按哪|能不能|能否/.test(text);
+    if (!tech) return '我是项目助理：技术问题按公司口径库回答并注明依据；也可以问"宜昌的项目到哪了"。报进度请用工作台的进度表单。';
+    const hit = kbHit(text, st.kb);
+    if (hit) return `${hit.a}\n（依据：口径库第 ${hit.id} 条，${hit.source}）`;
+    const id = nid('issues');
+    D.issues.push({id, project_id: null, type: '技术口径', where_txt: text, reporter: who, assignee: assigneeFor('技术口径', null),
+                   status: '待处理', created: today(), escalated: 0, escalated_at: null, closed_at: null, resolution: null, kb_id: null});
+    return `口径库里还没有这一条，已派给技术负责人周工（${D.settings.routing['技术口径'].sla} 天内答复，超时升级胡总）。答复后会收进口径库，下次直接答。`;
+  }
+
+  function prefill(text) {
+    const st = state();
+    const code = (text.toUpperCase().match(/[A-Z]{2}-\d{2}/) || [])[0] || null;
+    const body = text.replace(/[A-Za-z]{2}-\d{2}/, '').trim();
+    const clauses = body.split(/[，,。；;]/).map(s => s.trim()).filter(Boolean);
+    const stageWords = [['报告审核', 5], ['出报告', 6], ['协商', 4], ['对量', 3], ['审核对量', 3], ['核对', 2], ['汇报', 2], ['初稿', 1], ['开始执行', 0]];
+    let stage = null;
+    for (const c of clauses.slice().reverse()) { if (/开始|进入|准备/.test(c)) { const w = stageWords.find(([k]) => has(c, k)); if (w) { stage = st.stage_names[w[1]]; break; } } }
+    const types = [['需要胡总出面', /胡总|出面|延期/], ['对方不认', /不认|不同意|分歧|争议/], ['资料缺失', /缺|没交|没补|补交|才能补|对不上/],
+                   ['技术口径', /怎么算|按哪|口径|能不能/], ['内部资源', /人手|调人|忙不过来/]];
+    const tp = types.find(([, re]) => re.test(body));
+    const blocked = !!tp;
+    let done = '', next = '', where = '';
+    if (blocked) {
+      const k = clauses.findIndex(c => tp[1].test(c));
+      const first = clauses[k].split(/时发现|发现/);
+      if (first.length > 1) { done = first[0].replace(/时$/, ''); clauses[k] = first[1]; }
+      else if (k > 0) done = clauses.slice(0, k).join('，');
+      where = clauses.slice(k).join('，');
+      next = tp[0] === '资料缺失' ? '跟进对方补齐资料' : tp[0] === '对方不认' ? '整理争议项和依据，约对方再谈' : '';
+    } else {
+      const k = clauses.findIndex(c => /开始|下一步|准备|明天|下周/.test(c));
+      done = (k >= 0 ? clauses.slice(0, k) : clauses).join('，');
+      next = k >= 0 ? clauses.slice(k).join('，') : '';
+    }
+    return {project_code: code, stage, done, next, blocked, issue_type: tp ? tp[0] : null, where};
+  }
+
+  // ---------------- 和原后端同样的接口
+  function call(path, body) {
+    db();
+    if (!body) { refresh(); return state(); }
+    let out = {};
+    switch (path) {
+      case '/api/lead/convert': out = {project_id: convertLead(+body.lead_id, body.biz, body.owner, body.doer)}; break;
+      case '/api/progress': out = progress(+body.project_id, body.who, +body.stage, body.done || '', body.next || '', !!body.blocked, body.issue_type, body.where || ''); break;
+      case '/api/issue': out = {kb_id: actIssue(+body.issue_id, body.action, body.who || '胡总', body.text || '', !!body.to_kb, body.assignee)}; break;
+      case '/api/review': addReview(+body.project_id, body.level, body.reviewer, body.result, body.reason || '', body.note || ''); break;
+      case '/api/settings': updateSettings(body); break;
+      case '/api/clock': D.settings.demo_date = addD(today(), +(body.days || 1)); break;
+      case '/api/reset': seed(ymd(new Date())); break;
+      case '/api/ask': out = {reply: ask(String(body.text || '').slice(0, 300), body.who || '员工')}; break;
+      case '/api/prefill': out = {fields: prefill(String(body.text || '').slice(0, 300))}; break;
+      default: throw new Error('not found');
+    }
+    refresh();
+    return {ok: true, ...out};
+  }
+  return {call};
+})();
+
+</script>
+<script>
+let S = null, tab = 'ov', blocked = false, formReady = false, setReady = false, picked = null;
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const WD = '日一二三四五六';
+const ymd = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const dt = s => new Date(String(s).slice(0, 10) + 'T00:00:00');
+const fd = s => s ? `${dt(s).getMonth() + 1}月${dt(s).getDate()}日` : '—';
+const fdw = s => `${fd(s)} 周${WD[dt(s).getDay()]}`;
+const addDays = (s, n) => { const d = dt(s); d.setDate(d.getDate() + n); return ymd(d); };
+const people = role => S.people.filter(p => !role || p[1] === role).map(p => p[0]);
+const proj = id => S.projects.find(p => p.id === id);
+
+function toast(m) { const t = $('toast'); t.textContent = m; t.style.display = 'block'; clearTimeout(t._h); t._h = setTimeout(() => t.style.display = 'none', 2200); }
+async function api(path, body) { return LOCAL.call(path, body); }
+async function load() { S = await api('/api/state'); render(); }
+
+function render() {
+  $('clock').textContent = fdw(S.today); $('briefDate').textContent = fdw(S.today);
+  const inbox = S.issues.filter(i => i.inbox); $('ibadge').textContent = inbox.length || '';
+  renderOv(); renderLeads(); renderInbox(); renderKb();
+  if (!formReady) { buildForm(); formReady = true; } else fillProjects();
+  if (!setReady) { buildSet(); setReady = true; }
+}
+
+function renderOv() {
+  const run = S.projects.filter(p => p.status !== '已出报告'), b = S.brief;
+  $('kpis').innerHTML = [['在办项目', run.length, ''], ['步骤超期', b.overdue.length, 'red'], ['未解决卡点', S.stats.open_issues, 'orange'],
+    ['待您处理', b.inbox.length, 'purple'], [`${S.stall_days} 天没更新`, b.stalled.length, '']]
+    .map(([n, v, c]) => `<div class="kpi ${c}"><b>${v}</b><span>${n}</span></div>`).join('');
+  const li = (arr, f) => arr.length ? arr.map(f).join('') : '<div class="muted small">无</div>';
+  $('blist').innerHTML = `<div><h4>待您处理</h4>${li(b.inbox, i => `<div class="it" data-tab-go="inbox">${esc(i.project)} · ${esc(i.type)}<br><span class="muted">${esc(i.where_txt)}（已 ${i.age} 天）</span></div>`)}</div>
+    <div><h4>步骤超期</h4>${li(b.overdue, p => `<div class="it" data-pid="${p.id}">${esc(p.code)} ${esc(p.name)}<br><span class="muted">「${esc(p.stage_name)}」超 ${p.overdue} 天 · ${esc(p.owner)}</span></div>`)}</div>
+    <div><h4>${S.stall_days} 天以上没更新 · 今天到期</h4>${li(b.stalled.concat(b.due_today), p => `<div class="it" data-pid="${p.id}">${esc(p.code)} ${esc(p.name)}<br><span class="muted">${p.stalled ? `${p.stale} 天没更新` : '本步骤今天到期'} · ${esc(p.owner)}</span></div>`)}</div>`;
+  $('lane').innerHTML = S.stage_names.map((n, k) => { const ps = S.projects.filter(p => p.stage === k);
+    return `<div class="col"><div class="ch"><span>${esc(n)}</span><span>${ps.length}</span></div>${ps.map(p => `<div class="chip s-${p.status}" data-pid="${p.id}"><b>${esc(p.code)}</b>${esc(p.name)}<br><small>${esc(p.owner)} · ${p.overdue ? `<span class="warn">超 ${p.overdue} 天</span>` : p.status === '卡住' ? '<span style="color:#a3560f">卡住</span>' : `到 ${fd(p.due)}`}</small></div>`).join('')}</div>`; }).join('');
+  const bars = (obj, cls) => { const e = Object.entries(obj).sort((a, b) => b[1] - a[1]); const m = Math.max(1, ...e.map(x => x[1]));
+    return e.length ? e.map(([k, v]) => `<div class="row"><span>${esc(k)}</span><i class="${cls}" style="width:${v / m * 100}%"></i><span>${v}</span></div>`).join('') : '<div class="muted small">无</div>'; };
+  $('byType').innerHTML = bars(S.stats.issue_by_type, 'o');
+  $('avgClose').textContent = S.stats.avg_close_days == null ? '—' : S.stats.avg_close_days + ' 天';
+  $('openCnt').textContent = `近 30 天已解决的卡点，从提出到关闭的平均天数；现在还有 ${S.stats.open_issues} 件没解决`;
+  $('reasons').innerHTML = bars(S.stats.return_reasons, 'r');
+  $('retRate').textContent = S.stats.review_total ? `退回率 ${Math.round(S.stats.review_returns / S.stats.review_total * 100)}%` : '';
+  $('load').innerHTML = bars(S.stats.load, '');
+}
+
+function renderLeads() {
+  $('leads').innerHTML = S.lead_stages.map(st => `<div><div class="small muted" style="margin-bottom:6px"><b>${st}</b></div>${S.leads.filter(l => l.stage === st).map(l => {
+    const p = l.project_id && proj(l.project_id);
+    return `<div class="lcard"><b>${esc(l.name)}</b><div class="muted small">${esc(l.source)} · ${esc(l.client)} · ${esc(l.biz)} · 规模${esc(l.scale)}</div>
+      <div class="small">负责人：${esc(l.owner)}${l.next_date ? ` · ${fd(l.next_date)} ${esc(l.next_note)}` : ` · ${esc(l.next_note)}`}</div>
+      ${p ? `<div style="margin-top:6px"><span class="pill" data-pid="${p.id}" style="cursor:pointer">已转为项目 ${esc(p.code)} · 查看</span></div>`
+          : (st === '信息收集' || st === '获取中') ? `<button class="btn" style="margin-top:8px" data-convert="${l.id}">签订合同，转为项目</button>` : ''}</div>`; }).join('') || '<div class="muted small">无</div>'}</div>`).join('');
+}
+
+function openConvert(id) {
+  const l = S.leads.find(x => x.id === id);
+  const plan = biz => { let d = S.today; return S.stage_names.slice(0, 6).map((n, k) => { d = addDays(d, S.templates[biz][k]); return `<tr><td>${esc(n)}</td><td>${S.templates[biz][k]} 天</td><td>${fd(d)}</td></tr>`; }).join(''); };
+  $('modal').innerHTML = `<h3 style="margin:0 0 4px">转为项目：${esc(l.name)}</h3><div class="muted small">签订合同后立项；系统按业务类型的节点模板，自动生成每一步的计划完成日期。</div>
+    <div class="grid2" style="margin-top:6px"><div><label class="f">业务类型</label><select id="cvBiz">${S.biz.map(b => `<option ${b === l.biz ? 'selected' : ''}>${b}</option>`).join('')}</select></div>
+    <div><label class="f">项目负责人</label><select id="cvOwner">${people('项目负责人').map(n => `<option>${n}</option>`).join('')}</select></div></div>
+    <label class="f">经办人</label><select id="cvDoer">${people('经办人').map(n => `<option>${n}</option>`).join('')}</select>
+    <label class="f">自动生成的节点计划</label><table id="cvPlan">${plan(l.biz)}</table>
+    <div style="margin-top:12px;display:flex;gap:10px"><button class="btn" id="cvOk">确认立项</button><button class="btn ghost" id="cvCancel">取消</button></div>`;
+  $('modal').classList.add('on'); $('mask').classList.add('on');
+  $('cvBiz').onchange = () => $('cvPlan').innerHTML = plan($('cvBiz').value);
+  $('cvCancel').onclick = closeAll;
+  $('cvOk').onclick = async () => { try { const r = await api('/api/lead/convert', {lead_id:id, biz:$('cvBiz').value, owner:$('cvOwner').value, doer:$('cvDoer').value});
+    closeAll(); await load(); toast('已立项，节点计划已生成'); openProject(r.project_id); } catch (e) { toast(e.message); } };
+}
+
+function openProject(id) {
+  const p = proj(id); if (!p) return;
+  const iss = S.issues.filter(i => i.project_id === id), rv = S.reviews.filter(r => r.project_id === id), up = S.updates.filter(u => u.project_id === id);
+  const tpl = S.templates[p.biz] || [];
+  $('drawer').innerHTML = `<div style="display:flex;justify-content:space-between"><h3 style="margin:0">${esc(p.code)} ${esc(p.name)}</h3><button class="btn ghost" id="dClose">关闭</button></div>
+    <div style="margin:6px 0">${p.status === '卡住' ? '<span class="pill o">卡住</span>' : p.status === '超期' ? '<span class="pill r">超期</span>' : `<span class="pill">${esc(p.status)}</span>`} ${p.boss ? '<span class="pill p">要胡总处理</span>' : ''} ${p.stalled ? `<span class="pill r">${p.stale} 天没更新</span>` : ''}</div>
+    <div class="steps">${S.stage_names.slice(0, 6).map((n, k) => `<div class="${k < p.stage ? 'done' : k === p.stage ? (p.overdue ? 'late' : 'cur') : ''}">${esc(n)}<br>${tpl[k] ?? '-'} 天</div>`).join('')}</div>
+    <div class="kv"><div>业务类型</div><div>${esc(p.biz)} · ${esc(p.client)} · ${esc(p.city)}</div><div>负责人</div><div>${esc(p.owner)}（经办 ${esc(p.doer)}）</div>
+      <div>当前步骤</div><div>「${esc(p.stage_name)}」${fd(p.stage_start)} 开始，计划 ${p.plan_days} 天，${p.overdue ? `<b style="color:var(--r)">已超 ${p.overdue} 天</b>` : `到 ${fd(p.due)}`}</div>
+      <div>立项</div><div>${fd(p.created)}，全流程计划 ${p.total_days} 天</div></div>
+    <h3 style="margin-top:16px">卡点</h3>${iss.length ? iss.map(i => `<div class="small" style="margin-bottom:6px">${i.status === '待处理' ? '<span class="pill o">待处理</span>' : '<span class="pill">已解决</span>'} <b>${esc(i.type)}</b>：${esc(i.where_txt)} <span class="muted">· ${esc(i.reporter)}提出 · 派给${esc(i.assignee)} · ${i.age} 天${i.escalated ? ' · 已升级' : ''}${i.resolution ? ` · 解决：${esc(i.resolution)}` : ''}</span></div>`).join('') : '<div class="muted small">无</div>'}
+    <h3 style="margin-top:16px">复核登记</h3>${rv.length ? rv.map(r => `<div class="small">${esc(r.ts.slice(5, 10))} ${esc(r.level)}复核 ${r.result === '退回' ? `<span class="pill r">退回：${esc(r.reason)}</span>` : '<span class="pill">通过</span>'} ${esc(r.reviewer)}</div>`).join('') : '<div class="muted small">无</div>'}
+    <div class="acts"><select id="rvLvl"><option>一级</option><option>二级</option><option selected>三级</option></select><select id="rvWho">${people().map(n => `<option ${n === '周工' ? 'selected' : ''}>${n}</option>`).join('')}</select>
+      <select id="rvRes"><option>通过</option><option>退回</option></select><select id="rvWhy">${S.review_reasons.map(r => `<option>${r}</option>`).join('')}</select><button class="btn ghost" id="rvOk">登记复核</button></div>
+    <h3 style="margin-top:16px">时间线</h3><div class="tl">${up.map(u => `<div class="k-${esc(u.kind)}"><span class="muted">${esc(u.ts.slice(5))} · ${esc(u.who)} · ${esc(u.kind)}</span><br>${esc(u.text)}</div>`).join('')}</div>`;
+  $('drawer').classList.add('on'); $('mask').classList.add('on');
+  $('dClose').onclick = closeAll;
+  $('rvOk').onclick = async () => { await api('/api/review', {project_id:id, level:$('rvLvl').value, reviewer:$('rvWho').value, result:$('rvRes').value, reason:$('rvWhy').value});
+    await load(); openProject(id); toast('已登记复核'); };
+}
+function closeAll() { ['drawer', 'modal', 'mask'].forEach(x => $(x).classList.remove('on')); }
+
+function buildForm() {
+  $('who').innerHTML = people('经办人').concat(people('项目负责人')).map(n => `<option>${n}</option>`).join('');
+  $('stage').innerHTML = S.stage_names.map((n, k) => `<option value="${k}">${esc(n)}</option>`).join('');
+  $('itype').innerHTML = Object.keys(S.routing).map(t => `<option>${t}</option>`).join('');
+  $('oneEx').innerHTML = ['XG-03 收资料时发现缺 12 张签证原件，施工方说下周才能补', 'WH-01 对量完了，土方差异施工方认了，开始协商其余几项']
+    .map(t => `<span data-one="1">${esc(t)}</span>`).join('');
+  fillProjects(); refreshFormInfo();
+}
+function fillProjects() {
+  const who = $('who').value; const mine = S.projects.filter(p => p.status !== '已出报告' && (p.doer === who || p.owner === who));
+  const list = mine.length ? mine : S.projects.filter(p => p.status !== '已出报告');
+  const want = list.find(p => p.id === picked) || list.find(p => p.code === 'XG-03') || list[0];
+  $('proj').innerHTML = list.map(p => `<option value="${p.id}" ${want && p.id === want.id ? 'selected' : ''}>${esc(p.code)} ${esc(p.name)}</option>`).join('');
+  syncStage();
+}
+function syncStage() { const p = proj(+$('proj').value); if (p) $('stage').value = p.stage; refreshFormInfo(); }
+function refreshFormInfo() {
+  const p = proj(+$('proj').value);
+  if (!p) return;
+  $('projInfo').innerHTML = `当前「${esc(p.stage_name)}」，${fd(p.stage_start)} 开始，计划 ${p.plan_days} 天，${p.overdue ? `<b style="color:var(--r)">已超 ${p.overdue} 天</b>` : `${fd(p.due)} 前完成`} · 负责人 ${esc(p.owner)}`;
+  const t = $('itype').value, r = S.routing[t]; const assignee = !r ? '' : r.role === '项目负责人' ? p.owner : r.role === '技术负责人' ? '周工' : '胡总';
+  $('route').innerHTML = r ? `提交后会生成一张卡点单，派给 <b>${esc(assignee)}</b>（${esc(r.role)}），${r.sla} 天内处理；到时限还没解决，自动升级到胡总的简报和"待我处理"。` : '';
+  $('repTl').innerHTML = S.updates.filter(u => u.project_id === p.id).slice(0, 8).map(u => `<div class="k-${esc(u.kind)}"><span class="muted">${esc(u.ts.slice(5))} · ${esc(u.who)} · ${esc(u.kind)}</span><br>${esc(u.text)}</div>`).join('') || '<div class="muted small">暂无</div>';
+}
+function setBlocked(v) { blocked = v; document.querySelectorAll('[data-blk]').forEach(b => { b.classList.toggle('on', (b.dataset.blk === '1') === v); b.classList.toggle('bad', b.dataset.blk === '1'); }); $('blkBox').hidden = !v; }
+
+function renderInbox() {
+  const ib = S.issues.filter(i => i.inbox), others = S.issues.filter(i => i.status === '待处理' && !i.inbox);
+  $('ibox').innerHTML = ib.length ? ib.map(i => `<div class="issue ${i.escalated ? 'esc' : ''}">
+    <div class="hd"><span>${esc(i.project)} · ${esc(i.type)}</span><span>${i.escalated ? `<span class="pill r">超时升级</span>` : '<span class="pill p">直接派给您</span>'}</span></div>
+    <div style="margin:6px 0">${esc(i.where_txt)}</div><div class="muted small">${esc(i.reporter)}提出 · 原派给${esc(i.assignee)} · 已 ${i.age} 天（时限 ${i.sla} 天）</div>
+    <textarea id="res${i.id}" placeholder="处理意见或解决方式" style="margin-top:8px"></textarea>
+    <div class="acts"><label class="small" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="kb${i.id}" style="width:auto" ${i.type === '技术口径' ? 'checked' : ''}> 答案收进口径库</label>
+      <button class="btn" data-close="${i.id}">标记解决</button><select id="to${i.id}">${people().filter(n => n !== '胡总').map(n => `<option>${n}</option>`).join('')}</select><button class="btn ghost" data-reassign="${i.id}">转派</button></div></div>`).join('')
+    : '<div class="muted">没有需要您处理的卡点</div>';
+  $('others').innerHTML = others.length ? `<table><tr><th>项目</th><th>类型</th><th>派给</th><th>已几天</th></tr>${others.map(i => `<tr><td>${esc(i.project)}<br><span class="muted small">${esc(i.where_txt)}</span></td><td>${esc(i.type)}</td><td>${esc(i.assignee)}</td><td>${i.age} / ${i.sla}</td></tr>`).join('')}</table>` : '<div class="muted">无</div>';
+}
+
+function renderKb() {
+  $('kbCnt').textContent = `${S.kb.length} 条`;
+  $('kb').innerHTML = S.kb.slice().reverse().map(k => `<div><span class="pill ${k.source === '示例口径' ? '' : 'p'}">${esc(k.source)}</span> <b>${esc(k.q)}</b><br><span class="muted">${esc(k.a)}</span></div>`).join('');
+}
+
+function buildSet() {
+  $('stageNames').innerHTML = S.stage_names.map((n, k) => `<input data-sn="${k}" value="${esc(n)}" style="width:118px;margin:0 6px 6px 0;display:inline-block">`).join('');
+  $('routing').innerHTML = `<tr><th>卡点类型</th><th>谁处理</th><th>几天内</th></tr>` + Object.entries(S.routing).map(([t, r]) => `<tr><td>${esc(t)}</td>
+    <td><select data-rr="${esc(t)}">${['项目负责人', '技术负责人', '胡总'].map(x => `<option ${x === r.role ? 'selected' : ''}>${x}</option>`).join('')}</select></td>
+    <td><input type="number" data-rs="${esc(t)}" value="${r.sla}"></td></tr>`).join('');
+  $('tpl').innerHTML = `<tr><th>业务</th>${S.stage_names.slice(0, 6).map(n => `<th>${esc(n)}</th>`).join('')}</tr>` + S.biz.map(b => `<tr><td>${b}</td>${S.templates[b].map((d, k) => `<td><input type="number" data-tb="${b}" data-tk="${k}" value="${d}"></td>`).join('')}</tr>`).join('');
+  $('stall').value = S.stall_days; $('todo').checked = !!S.todo_enabled;
+}
+
+document.addEventListener('click', async e => {
+  const t = e.target.closest('[data-tab],[data-pid],[data-convert],[data-clock],[data-blk],[data-close],[data-reassign],[data-ask],[data-one],[data-tab-go]');
+  if (e.target.id === 'mask') return closeAll();
+  if (!t) return;
+  try {
+    if (t.dataset.tab || t.dataset.tabGo) { tab = t.dataset.tab || t.dataset.tabGo; document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
+      ['ov', 'lead', 'rep', 'inbox', 'ask', 'set'].forEach(x => $(x).hidden = x !== tab); if (tab === 'set') buildSet(); return; }
+    if (t.dataset.pid) return openProject(+t.dataset.pid);
+    if (t.dataset.convert) return openConvert(+t.dataset.convert);
+    if (t.dataset.clock) { await api('/api/clock', {days:+t.dataset.clock}); await load(); return toast(`已快进 ${t.dataset.clock} 天，规则已重新计算`); }
+    if (t.dataset.blk) return setBlocked(t.dataset.blk === '1');
+    if (t.dataset.close) { const id = +t.dataset.close, text = $('res' + id).value.trim(); if (!text) return toast('先写一句怎么解决的');
+      const r = await api('/api/issue', {issue_id:id, action:'close', who:'胡总', text, to_kb:$('kb' + id).checked}); await load();
+      return toast(r.kb_id ? '已解决，答案已收进口径库' : '已解决'); }
+    if (t.dataset.reassign) { const id = +t.dataset.reassign; await api('/api/issue', {issue_id:id, action:'reassign', who:'胡总', text:$('res' + id).value.trim(), assignee:$('to' + id).value}); await load(); return toast('已转派'); }
+    if (t.dataset.ask) { $('askIn').value = t.textContent; return; }
+    if (t.dataset.one) { $('oneline').value = t.textContent; return; }
+  } catch (err) { toast(err.message); }
+});
+$('who').onchange = () => { picked = null; fillProjects(); }; $('proj').onchange = () => { picked = +$('proj').value; syncStage(); }; $('itype').onchange = refreshFormInfo;
+$('submit').onclick = async () => {
+  const p = proj(+$('proj').value); if (!p) return;
+  if (blocked && !$('where').value.trim()) return toast('卡点要写清卡在哪');
+  $('submit').disabled = true;
+  try {
+    const r = await api('/api/progress', {project_id:p.id, who:$('who').value, stage:+$('stage').value, done:$('done').value, next:$('next').value, blocked, issue_type:$('itype').value, where:$('where').value});
+    $('repResult').innerHTML = `<div class="ok">已提交。${r.issue ? `\n卡点单已派给 ${esc(r.issue.assignee)}，${r.issue.sla} 天内处理；超时自动升级到胡总。${S.todo_enabled ? '\n（正式版会同时给他发一条钉钉待办。）' : ''}` : ''}</div>`;
+    ['done', 'next', 'where'].forEach(x => $(x).value = ''); setBlocked(false); await load();
+  } catch (e) { toast(e.message); }
+  $('submit').disabled = false;
+};
+$('fill').onclick = async () => {
+  const text = $('oneline').value.trim(); if (!text) return toast('先写一句话');
+  $('fill').disabled = true; $('fill').textContent = 'AI 正在整理…';
+  try {
+    const f = (await api('/api/prefill', {text})).fields;
+    const p = S.projects.find(x => x.code === f.project_code);
+    if (p) { picked = p.id; if (!Array.from($('proj').options).some(o => +o.value === p.id)) $('who').value = p.doer; fillProjects(); }
+    const si = S.stage_names.indexOf(f.stage); $('stage').value = si >= 0 ? si : (p ? p.stage : $('stage').value);
+    $('done').value = f.done || ''; $('next').value = f.next || ''; setBlocked(!!f.blocked);
+    if (f.issue_type && S.routing[f.issue_type]) $('itype').value = f.issue_type; $('where').value = f.where || '';
+    refreshFormInfo(); toast('已填好表单，请检查后提交');
+  } catch (e) { toast(e.message); }
+  $('fill').disabled = false; $('fill').textContent = 'AI 帮我填表';
+};
+$('askEx').innerHTML = ['签证单上没有监理签字，结算能不能认？', '跨年度施工的材料调差，信息价按哪一期取？', '宜昌的项目现在到哪了？']
+  .map(t => `<span data-ask="1">${t}</span>`).join('');
+$('askBtn').onclick = async () => {
+  const text = $('askIn').value.trim(); if (!text) return; $('askIn').value = '';
+  $('chat').insertAdjacentHTML('beforeend', `<div class="bub me">${esc(text)}</div>`);
+  const w = document.createElement('div'); w.className = 'bub ai'; w.textContent = '正在查口径库…'; $('chat').appendChild(w); $('chat').scrollTop = 1e6;
+  try { w.textContent = (await api('/api/ask', {text, who:'李工'})).reply; await load(); } catch (e) { w.textContent = '出错了：' + e.message; }
+  $('chat').scrollTop = 1e6;
+};
+$('askIn').addEventListener('keydown', e => { if (e.key === 'Enter') $('askBtn').click(); });
+$('saveSet').onclick = async () => {
+  const names = Array.from(document.querySelectorAll('[data-sn]')).map(i => i.value);
+  const routing = {}; document.querySelectorAll('[data-rr]').forEach(s => routing[s.dataset.rr] = {role:s.value, sla:+document.querySelector(`[data-rs="${s.dataset.rr}"]`).value});
+  const templates = {}; document.querySelectorAll('[data-tb]').forEach(i => { (templates[i.dataset.tb] = templates[i.dataset.tb] || [])[+i.dataset.tk] = +i.value; });
+  await api('/api/settings', {stage_names:names, routing, templates, stall_days:+$('stall').value, todo_enabled:$('todo').checked});
+  formReady = false; setReady = false; await load(); toast('已生效：总览和简报已按新规矩重算');
+};
+$('resetDemo').onclick = async () => { if (!confirm('恢复到初始演示数据？')) return; await api('/api/reset', {}); formReady = false; setReady = false; await load(); toast('已恢复演示数据'); };
+load().catch(e => toast('读取失败：' + e.message));
+</script>
+</body>
+</html>
